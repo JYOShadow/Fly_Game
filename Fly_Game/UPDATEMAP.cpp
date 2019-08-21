@@ -126,7 +126,9 @@ void UPDATEMAP::UpdateFlying()
 		add_y = 0;
 		if (p->node.type == PLAYER_FLY_TYPE)
 		{
-			GetMove(add_x, add_y);
+			if(operation)
+				GetMove(add_x, add_y);
+			operation = (!operation);
 		}
 		else if (p->node.type == 4)
 		{
@@ -144,6 +146,12 @@ void UPDATEMAP::UpdateFlying()
 			{
 				AI_speed--;
 			}
+		}
+		if (add_x == 2 && add_y == 2)
+		{
+			SiteClearing();
+			clearn_number_times--;
+			continue;
 		}
 		int x = p->node.x + add_x;
 		int y = p->node.y + add_y;
@@ -663,16 +671,12 @@ void UPDATEMAP::BulletDecisionSettlement(int x, int y, bool b_c, bullet_n& pr)//
 
 void UPDATEMAP::SiteClearing()
 {
-	bullet_n pr = nullptr;
-	while (b_tail == b_head)
+	bullet_n pr = b_head->next;
+	while (pr)
 	{
-		pr = b_tail;
-		map[pr->node.y][pr->node.x] = 0;
-		b_tail = pr->fp;
-		b_tail->next = nullptr;
-		delete pr;
+		pr->node.exist = false;
+		pr = pr->next;
 	}
-	clearn_number_times--;
 }
 
 void UPDATEMAP::ChangingBullet(bullet& b)
@@ -867,6 +871,20 @@ void  UPDATEMAP::GetMove(int& add_x, int& add_y)
 		x = 0;
 		y = 1;
 	}
+	else if (GetAsyncKeyState(VK_SPACE))
+	{
+		if (clearn_number_times == 0)
+		{
+			x = 0;
+			y = 0;
+		}
+		else
+		{
+			x = 2;
+			y = 2;
+		}
+		
+	}
 	add_x = x;
 	add_y = y;
 }
@@ -881,6 +899,7 @@ void UPDATEMAP::Start()
 		ShowMap();
 		std::cout << "healthy : " << PLAYER_FLY.healthy << std::endl;
 		std::cout << "score : " << score << std::endl;
+		std::cout << "clearn times : " << clearn_number_times << std::endl;
 		if (PLAYER_FLY.type != 2)
 		{
 			std::cout << "you dead." << std::endl;

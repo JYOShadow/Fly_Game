@@ -69,6 +69,7 @@ class UPDATEMAP
 	int boss_x = 1;
 	int score = 0;
 	int AI_speed = 3;
+	bool operation = true;
 	size_t clearn_number_times = 3;
 	size_t row;
 	size_t col;
