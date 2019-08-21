@@ -1,8 +1,10 @@
 ﻿  UPDATEMAP.cpp
-F:\Fly_Game\Fly_Game.v.s.2.1\Fly_Game\Fly_Game\UPDATEMAP.h(37,2): warning C4091:  “typedef ”: 没有声明变量时忽略“flying”的左侧
-F:\Fly_Game\Fly_Game.v.s.2.1\Fly_Game\Fly_Game\UPDATEMAP.h(48,2): warning C4091:  “typedef ”: 没有声明变量时忽略“bullet”的左侧
-F:\Fly_Game\Fly_Game.v.s.2.1\Fly_Game\Fly_Game\UPDATEMAP.cpp(81,20): warning C4018:  “<”: 有符号/无符号不匹配
-F:\Fly_Game\Fly_Game.v.s.2.1\Fly_Game\Fly_Game\UPDATEMAP.cpp(83,21): warning C4018:  “<”: 有符号/无符号不匹配
-F:\Fly_Game\Fly_Game.v.s.2.1\Fly_Game\Fly_Game\UPDATEMAP.cpp(758,12): warning C4244:  “参数”: 从“time_t”转换到“unsigned int”，可能丢失数据
-F:\Fly_Game\Fly_Game.v.s.2.1\Fly_Game\Fly_Game\UPDATEMAP.cpp(486): warning C4715:  “UPDATEMAP::BulletCollide”: 不是所有的控件路径都返回值
-  Fly_Game.vcxproj -> F:\Fly_Game\Fly_Game.v.s.2.1\Fly_Game\Debug\Fly_Game.exe
+F:\Git_workspace\Fly_Game\Fly_Game\UPDATEMAP.h(39,2): warning C4091:  “typedef ”: 没有声明变量时忽略“flying”的左侧
+F:\Git_workspace\Fly_Game\Fly_Game\UPDATEMAP.h(50,2): warning C4091:  “typedef ”: 没有声明变量时忽略“bullet”的左侧
+F:\Git_workspace\Fly_Game\Fly_Game\UPDATEMAP.cpp(96,20): warning C4018:  “<”: 有符号/无符号不匹配
+F:\Git_workspace\Fly_Game\Fly_Game\UPDATEMAP.cpp(98,21): warning C4018:  “<”: 有符号/无符号不匹配
+F:\Git_workspace\Fly_Game\Fly_Game\UPDATEMAP.cpp(722,8): warning C4018:  “>=”: 有符号/无符号不匹配
+F:\Git_workspace\Fly_Game\Fly_Game\UPDATEMAP.cpp(722,44): warning C4018:  “>=”: 有符号/无符号不匹配
+F:\Git_workspace\Fly_Game\Fly_Game\UPDATEMAP.cpp(809,12): warning C4244:  “参数”: 从“time_t”转换到“unsigned int”，可能丢失数据
+F:\Git_workspace\Fly_Game\Fly_Game\UPDATEMAP.cpp(567): warning C4715:  “UPDATEMAP::BulletCollide”: 不是所有的控件路径都返回值
+  Fly_Game.vcxproj -> F:\Git_workspace\Fly_Game\Debug\Fly_Game.exe

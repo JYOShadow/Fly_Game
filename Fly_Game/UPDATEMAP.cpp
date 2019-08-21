@@ -60,7 +60,22 @@ void UPDATEMAP::InitMap()
 
 	map[player_fly->node.y][player_fly->node.x] = PLAYER_FLY_TYPE;
 
-	fly_n boss = new fly_node;
+	/*fly_n boss = new fly_node;
+	boss->node.x = col / 2;
+	boss->node.y = row - 7;
+	boss->node.type = 3;
+	boss->node.healthy = 3;
+	boss->node.bullet_type = 19;
+	boss->node.shoot = 0;
+
+	boss->next = nullptr;
+	boss->fp = f_tail;
+	f_tail->next = boss;
+	f_tail = boss;
+
+	map[boss->node.y][boss->node.x] = 3;*/
+
+	/*fly_n boss = new fly_node;
 	boss->node.x = col / 2;
 	boss->node.y = 3;
 	boss->node.type = 4;
@@ -73,7 +88,7 @@ void UPDATEMAP::InitMap()
 	f_tail->next = boss;
 	f_tail = boss;
 
-	map[boss->node.y][boss->node.x] = 4;
+	map[boss->node.y][boss->node.x] = 4;*/
 }
 
 void UPDATEMAP::ShowMap()
@@ -115,10 +130,10 @@ void UPDATEMAP::ShowMap()
 void UPDATEMAP::Update()
 {
 	UpdateFlying();
-	UpdateBullet();
+	//UpdateBullet();
 	UpdateMap();
-	UpdateFlyNode();
-	UpdateBulletNode();
+	CleanFlyNode();
+	//UpdateBulletNode();
 }
 
 void UPDATEMAP::UpdateFlying()
@@ -140,24 +155,26 @@ void UPDATEMAP::UpdateFlying()
 		else
 		{
 			//AIMOVE
+			/*add_x = 0;
+			add_y = 1;*/
 			GetAIMove(add_x, add_y);
 		}
 		int x = p->node.x + add_x;
 		int y = p->node.y + add_y;
-
-		FlyDecisionSettlement(FlyMove(x, y, p), x, y, p);
-		if (p->node.shoot == 0)
+		int f_c = FlyCollide(x, y, p);
+		FlyDecisionSettlement(f_c, x, y, p);
+		/*if (p->node.shoot == 0)
 		{
 			FlyShoot(p);
 		}
-		else p->node.shoot--;
+		else p->node.shoot--;*/
 		p = p->next;
 	}
-	/*if (fly_count < FLY_COUNT)
+	if (fly_count < FLY_COUNT)
 	{
 		ProductFly();
 		fly_count++;
-	}*/
+	}
 }
 
 void UPDATEMAP::UpdateBullet()
@@ -175,48 +192,112 @@ void UPDATEMAP::UpdateBullet()
 
 void UPDATEMAP::UpdateMap()
 {
-	fly_n f_temp = f_head->next;
-	bullet_n b_temp = b_head->next;
-	while (f_temp)
+	fly_n f_search = f_head->next;
+
+	//飞船与子弹碰撞操作
+	while (f_search)
 	{
-		b_temp = b_head->next;
-		while (b_temp)
+		bullet_n b_search = b_head->next;
+		while (b_search)
 		{
-			if (f_temp->node.x == b_temp->node.x && f_temp->node.y == b_temp->node.y)
+			//飞船与子弹碰撞
+			if (f_search->node.x == b_search->node.x && f_search->node.y == b_search->node.y)
 			{
-				f_temp->node.healthy -= b_temp->node.damge;
-				DeleteBullet(b_temp);
+				f_search->node.healthy -= b_search->node.damge;
+				b_search->node.exist = false;
+			}
+			if (f_search->node.healthy <= 0)
+			{
 				break;
 			}
-			b_temp = b_temp->next;
+			b_search = b_search->next;
 		}
-		if (f_temp->node.healthy <= 0)
+		if (f_search->node.healthy <= 0)
 		{
-			fly_n f_delete = f_temp;
-			f_temp = f_temp->next;
-			DeleteFly(f_delete);
-			continue;
+			f_search->node.exist = false;
 		}
-		map[f_temp->node.y][f_temp->node.x] = f_temp->node.type;
-		f_temp = f_temp->next;
+		f_search = f_search->next;
 	}
-	b_temp = b_head->next;
-	while (b_temp)
+	//飞船碰撞操作
+	f_search = f_head->next;
+	while (f_search)
 	{
-		map[b_temp->node.y][b_temp->node.x] = b_temp->node.type;
-		b_temp = b_temp->next;
+		if (f_search->node.exist)
+		{
+			fly_n f_temp_search = f_search->next;
+			while (f_temp_search)
+			{
+				if (f_temp_search->node.exist)
+				{
+					if (f_search->node.x == f_temp_search->node.x && f_search->node.y == f_temp_search->node.y)
+					{
+
+						if (f_search->node.type > PLAYER_FLY_TYPE && f_temp_search->node.type > PLAYER_FLY_TYPE)
+						{
+							//AI 与 AI碰撞
+							f_search->node.x = f_search->node.pre_x;
+							f_search->node.y = f_search->node.pre_y;
+							f_temp_search->node.x = f_temp_search->node.pre_x;
+							f_temp_search->node.y = f_temp_search->node.pre_y;
+						}
+						else
+						{
+							//AI 与 玩家碰撞
+							f_search->node.healthy -= COLLISIONDAMAGE;
+							f_temp_search->node.healthy -= COLLISIONDAMAGE;
+							if (f_search->node.healthy <= 0 && f_temp_search->node.healthy > 0)
+							{
+								f_search->node.exist = false;
+								break;
+							}
+							else if (f_search->node.healthy > 0 && f_temp_search->node.healthy <= 0)
+							{
+								f_temp_search->node.exist = false;
+							}
+							else if (f_search->node.healthy < 0 && f_temp_search->node.healthy < 0)
+							{
+								f_search->node.exist = false;
+								f_temp_search->node.exist = false;
+								break;
+							}
+							else
+							{
+								f_search->node.x = f_search->node.pre_x;
+								f_search->node.y = f_search->node.pre_y;
+								f_temp_search->node.x = f_temp_search->node.pre_x;
+								f_temp_search->node.y = f_temp_search->node.pre_y;
+							}
+						}
+					}
+				}
+				f_temp_search = f_temp_search->next;
+			}
+		}
+		f_search = f_search->next;
 	}
+
 }
 
-void UPDATEMAP::UpdateFlyNode()
+void UPDATEMAP::CleanFlyNode()
 {
 	fly_n p = f_head->next;
 	while (p)
 	{
 		if (!p->node.exist)
 		{
+			if (p->node.type > 2)
+			{
+				fly_count--;
+			}
 			p->fp->next = p->next;
-			p->next->fp = p->fp;
+			if (f_tail == p)
+			{
+				f_tail = p->fp;
+			}
+			else
+			{
+				p->next->fp = p->fp;
+			}
 			fly_n temp = p;
 			p = p->fp;
 			delete temp;
@@ -229,7 +310,7 @@ void UPDATEMAP::UpdateFlyNode()
 	}
 }
 
-void UPDATEMAP::UpdateBulletNode()
+void UPDATEMAP::CleanBulletNode()
 {
 	bullet_n p = b_head->next;
 	while (p)
@@ -534,6 +615,8 @@ void UPDATEMAP::ChangingBullet(bullet& b)
 
 }
 
+
+
 void UPDATEMAP::AddFly(flying fb)
 {
 	fly_n new_fly = new fly_node;
@@ -625,6 +708,8 @@ void UPDATEMAP::ProductFly()
 	flying new_fly;
 	new_fly.x = x;
 	new_fly.y = y;
+	new_fly.pre_x = x;
+	new_fly.pre_y = y;
 	new_fly.type = AI_FLY1_TYPE;
 	new_fly.shoot = AI_FLY1_SHOOT;
 	new_fly.healthy = AI_FLY1_HEALTHY;
@@ -632,9 +717,9 @@ void UPDATEMAP::ProductFly()
 	AddFly(new_fly);
 }
 
-int  UPDATEMAP::FlyMove(int x, int y, fly_n p)
+int  UPDATEMAP::FlyCollide(int x, int y, fly_n p)
 {
-	if (map[y][x] == 1)
+	if (y >= row - 1 || y <= 0 || x <= 0 || x >= col - 1)
 	{
 		if (p->node.type != 2)
 		{
@@ -643,14 +728,9 @@ int  UPDATEMAP::FlyMove(int x, int y, fly_n p)
 				return 1;//AI 飞出底线
 			}
 		}
-		return 0;
+		return 0;//不进行移动
 	}
-	else if (map[y][x] == 2
-		|| map[y][x] == 3)
-		if (map[y][x] == p->node.type)
-			return 5;
-		else return 3;//与AI碰撞
-	else return 4;
+	else return 2;
 
 }
 
@@ -664,45 +744,16 @@ void UPDATEMAP::FlyDecisionSettlement(int decision, int x, int y, fly_n& p)
 	{
 		//AI 飞出底线
 		map[p->node.y][p->node.x] = 0;
-		fly_n temp = p;
-		p = p->fp;
-		DeleteFly(temp);
+		p->node.exist = false;
 		break;
 	}
-	case 3:
-	{
-		//与AI碰撞
-		fly_n aim = SearchFly(x, y);
-		if (aim)
-		{
-			p->node.healthy -= COLLISIONDAMAGE;
-			aim->node.healthy -= COLLISIONDAMAGE;
-			map[p->node.y][p->node.y] = 0;
-			map[aim->node.y][aim->node.y] = 0;
-			if (p->node.healthy <= 0)
-			{
-				//death
-				fly_n temp = p;
-				p = p->fp;
-				DeleteFly(temp);
-				break;
-			}
-			else
-			{
-				//live
-				p->node.x = x;
-				p->node.y = y;
-				DeleteFly(aim);
-				break;
-			}
-		}
-	}
-	case 4:
+	case 2:
 		//正常移动
 		map[p->node.y][p->node.x] = 0;
+		p->node.pre_x = p->node.x;
+		p->node.pre_y = p->node.y;
 		p->node.x = x;
 		p->node.y = y;
-		//map[p->node.y][p->node.x] = p->node.type;
 		break;
 	default:
 		break;

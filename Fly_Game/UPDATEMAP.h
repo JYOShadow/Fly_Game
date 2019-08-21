@@ -29,6 +29,8 @@ typedef struct flying
 {
 	int x;
 	int y;
+	int pre_x;
+	int pre_y;
 	int type;
 	int healthy;
 	int bullet_type;
@@ -82,8 +84,8 @@ class UPDATEMAP
 	void UpdateFlying();
 	void UpdateBullet();
 	void UpdateMap();
-	void UpdateFlyNode();
-	void UpdateBulletNode();
+	void CleanFlyNode();
+	void CleanBulletNode();
 
 
 	void CreateBulletType10(fly_n p);
@@ -108,7 +110,7 @@ class UPDATEMAP
 	int LenFly();//飞船链表长度
 	void FlyShoot(fly_n& p);//飞船发射子弹
 	void ProductFly();//随机生成小飞船
-	int FlyMove(int add_x, int add_y, fly_n p);//飞船碰撞判定
+	int FlyCollide(int add_x, int add_y, fly_n p);//飞船碰撞判定
 	void FlyDecisionSettlement(int decision, int add_x, int add_y, fly_n& p);//飞船碰撞判定结果执行
 	void GetAIMove(int& add_x, int& add_y);//AI移动
 	void GetBossMove(int& add_x, int& add_y, fly_n p);//Boss移动
