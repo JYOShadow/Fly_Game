@@ -15,7 +15,7 @@
 #define AI_FLY1_HEALTHY 3
 
 #define PLAYER_FLY_BULLET 10
-#define AI_FLY1_BULLET 20
+#define AI_FLY1_BULLET 21
 
 #define PLAYER_FLY_SHOOT 1
 #define AI_FLY1_SHOOT 9

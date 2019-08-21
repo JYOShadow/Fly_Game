@@ -536,12 +536,26 @@ void UPDATEMAP::CreateBulletType20(fly_n p)
 			if (p->node.x < col / 2)
 			{
 				new_bullet.x = p->node.x + i;
-				new_bullet.y = p->node.y + i;
+				if (p->node.y + i < row - 1)
+				{
+					new_bullet.y = p->node.y + i;
+				}
+				else
+				{
+					new_bullet.y = p->node.y;
+				}
 			}
 			else 
 			{
 				new_bullet.x = p->node.x - i;
-				new_bullet.y = p->node.y + i;
+				if (p->node.y + i < row - 1)
+				{
+					new_bullet.y = p->node.y + i;
+				}
+				else
+				{
+					new_bullet.y = p->node.y;
+				}
 			}
 			new_bullet.type = p->node.bullet_type;
 			if (p->node.x < col / 2)
@@ -768,7 +782,7 @@ void UPDATEMAP::ProductFly()
 	new_fly.type = AI_FLY1_TYPE;
 	new_fly.shoot = AI_FLY1_SHOOT;
 	new_fly.healthy = AI_FLY1_HEALTHY;
-	new_fly.bullet_type = AI_FLY1_BULLET;
+	new_fly.bullet_type = rand() % 2 + 20;
 	AddFly(new_fly);
 }
 

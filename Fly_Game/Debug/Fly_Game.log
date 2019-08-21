@@ -4,15 +4,17 @@ F:\Git_workspace\Fly_Game\Fly_Game\UPDATEMAP.h(50,2): warning C4091:  “typedef
 F:\Git_workspace\Fly_Game\Fly_Game\UPDATEMAP.cpp(71,20): warning C4018:  “<”: 有符号/无符号不匹配
 F:\Git_workspace\Fly_Game\Fly_Game\UPDATEMAP.cpp(73,21): warning C4018:  “<”: 有符号/无符号不匹配
 F:\Git_workspace\Fly_Game\Fly_Game\UPDATEMAP.cpp(536,18): warning C4018:  “<”: 有符号/无符号不匹配
-F:\Git_workspace\Fly_Game\Fly_Game\UPDATEMAP.cpp(547,18): warning C4018:  “<”: 有符号/无符号不匹配
-F:\Git_workspace\Fly_Game\Fly_Game\UPDATEMAP.cpp(618,13): warning C4018:  “>=”: 有符号/无符号不匹配
-F:\Git_workspace\Fly_Game\Fly_Game\UPDATEMAP.cpp(618,29): warning C4018:  “>=”: 有符号/无符号不匹配
-F:\Git_workspace\Fly_Game\Fly_Game\UPDATEMAP.cpp(777,8): warning C4018:  “>=”: 有符号/无符号不匹配
-F:\Git_workspace\Fly_Game\Fly_Game\UPDATEMAP.cpp(777,44): warning C4018:  “>=”: 有符号/无符号不匹配
+F:\Git_workspace\Fly_Game\Fly_Game\UPDATEMAP.cpp(539,23): warning C4018:  “<”: 有符号/无符号不匹配
+F:\Git_workspace\Fly_Game\Fly_Game\UPDATEMAP.cpp(551,23): warning C4018:  “<”: 有符号/无符号不匹配
+F:\Git_workspace\Fly_Game\Fly_Game\UPDATEMAP.cpp(561,18): warning C4018:  “<”: 有符号/无符号不匹配
+F:\Git_workspace\Fly_Game\Fly_Game\UPDATEMAP.cpp(632,13): warning C4018:  “>=”: 有符号/无符号不匹配
+F:\Git_workspace\Fly_Game\Fly_Game\UPDATEMAP.cpp(632,29): warning C4018:  “>=”: 有符号/无符号不匹配
+F:\Git_workspace\Fly_Game\Fly_Game\UPDATEMAP.cpp(791,8): warning C4018:  “>=”: 有符号/无符号不匹配
+F:\Git_workspace\Fly_Game\Fly_Game\UPDATEMAP.cpp(791,44): warning C4018:  “>=”: 有符号/无符号不匹配
   main.cpp
-F:\Git_workspace\Fly_Game\Fly_Game\UPDATEMAP.cpp(864,12): warning C4244:  “参数”: 从“time_t”转换到“unsigned int”，可能丢失数据
+F:\Git_workspace\Fly_Game\Fly_Game\UPDATEMAP.cpp(878,12): warning C4244:  “参数”: 从“time_t”转换到“unsigned int”，可能丢失数据
 F:\Git_workspace\Fly_Game\Fly_Game\UPDATEMAP.h(39,2): warning C4091:  “typedef ”: 没有声明变量时忽略“flying”的左侧
   正在生成代码...
 F:\Git_workspace\Fly_Game\Fly_Game\UPDATEMAP.h(50,2): warning C4091:  “typedef ”: 没有声明变量时忽略“bullet”的左侧
-F:\Git_workspace\Fly_Game\Fly_Game\UPDATEMAP.cpp(626): warning C4715:  “UPDATEMAP::BulletCollide”: 不是所有的控件路径都返回值
+F:\Git_workspace\Fly_Game\Fly_Game\UPDATEMAP.cpp(640): warning C4715:  “UPDATEMAP::BulletCollide”: 不是所有的控件路径都返回值
   Fly_Game.vcxproj -> F:\Git_workspace\Fly_Game\Debug\Fly_Game.exe
