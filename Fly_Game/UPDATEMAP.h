@@ -14,11 +14,11 @@
 #define PLAYER_FLY_HEALTHY 20
 #define AI_FLY1_HEALTHY 3
 
-#define PLAYER_FLY_BULLET 16
-#define AI_FLY1_BULLET 10
+#define PLAYER_FLY_BULLET 10
+#define AI_FLY1_BULLET 20
 
 #define PLAYER_FLY_SHOOT 1
-#define AI_FLY1_SHOOT 5
+#define AI_FLY1_SHOOT 9
 
 
 
@@ -67,6 +67,8 @@ typedef struct fly_node
 class UPDATEMAP
 {
 	int boss_x = 1;
+	int score = 0;
+	int AI_speed = 3;
 	size_t clearn_number_times = 3;
 	size_t row;
 	size_t col;
@@ -89,23 +91,19 @@ class UPDATEMAP
 
 
 	void CreateBulletType10(fly_n p);
-	void CreateBulletType15(fly_n p);
+	void CreateBulletType20(fly_n p);
 	void AddBullet(bullet bn);
-	void DeleteBullet(bullet_n bn);
-	void DeleteBullet(int x, int y);
+	void DeleteBullet();
 	bullet_n SearchBullet(int x, int y);
 	void ScatterBullet(int& x, int& y, bullet b);
 	void BulletMove(int& x, int& y, bullet b);
-	//int BulletCollide(int x, int y);//碰撞判定
 	bool BulletCollide(int x, int y);//碰撞判定
-	//void BulletDecisionSettlement(int x, int y, int b_c, bullet_n& pr);
 	void BulletDecisionSettlement(int x, int y, bool b_c, bullet_n& pr);
 	void SiteClearing();//清屏
 	void ChangingBullet(bullet& b);
 
 	void AddFly(flying fb);//向飞船链表添加新结点
-	void DeleteFly(fly_n& fn);//向飞船链表删除新结点
-	void DeleteFly(int x, int y);//向飞船链表删除新结点
+	void DeleteFly();//删除飞船链表结点
 	fly_n SearchFly(int x, int y);//在飞船链表寻找新结点
 	int LenFly();//飞船链表长度
 	void FlyShoot(fly_n& p);//飞船发射子弹

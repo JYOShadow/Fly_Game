@@ -29,6 +29,10 @@ UPDATEMAP::~UPDATEMAP()
 		delete[] map[i];
 	}
 	delete[]map;
+	DeleteBullet();
+	delete b_head;
+	DeleteFly();
+	delete f_head;
 }
 
 void UPDATEMAP::InitMap()
@@ -60,35 +64,6 @@ void UPDATEMAP::InitMap()
 
 	map[player_fly->node.y][player_fly->node.x] = PLAYER_FLY_TYPE;
 
-	/*fly_n boss = new fly_node;
-	boss->node.x = col / 2;
-	boss->node.y = row - 7;
-	boss->node.type = 3;
-	boss->node.healthy = 3;
-	boss->node.bullet_type = 19;
-	boss->node.shoot = 0;
-
-	boss->next = nullptr;
-	boss->fp = f_tail;
-	f_tail->next = boss;
-	f_tail = boss;
-
-	map[boss->node.y][boss->node.x] = 3;*/
-
-	/*fly_n boss = new fly_node;
-	boss->node.x = col / 2;
-	boss->node.y = 3;
-	boss->node.type = 4;
-	boss->node.healthy = 100;
-	boss->node.bullet_type = 19;
-	boss->node.shoot = 0;
-
-	boss->next = nullptr;
-	boss->fp = f_tail;
-	f_tail->next = boss;
-	f_tail = boss;
-
-	map[boss->node.y][boss->node.x] = 4;*/
 }
 
 void UPDATEMAP::ShowMap()
@@ -103,7 +78,7 @@ void UPDATEMAP::ShowMap()
 			}
 			else if (map[i][j] == 1)
 			{
-				std::cout << "¡ö";
+				std::cout << "¨ˆ";
 			}
 			else if (map[i][j] == 2)
 			{
@@ -117,9 +92,13 @@ void UPDATEMAP::ShowMap()
 			{
 				std::cout << "¡ñ";
 			}
-			else if (map[i][j] >= 10)
+			else if (map[i][j] >= 10 && map[i][j] < 20)
 			{
-				std::cout << "¡ø";
+				std::cout << "¡ó";
+			}
+			else if (map[i][j] >= 20 && map[i][j] <= 30)
+			{
+				std::cout << "£ª";
 			}
 		}
 		std::cout << std::endl;
@@ -130,9 +109,10 @@ void UPDATEMAP::ShowMap()
 void UPDATEMAP::Update()
 {
 	UpdateFlying();
-	//UpdateBullet();
+	UpdateBullet();
 	UpdateMap();
 	CleanFlyNode();
+	CleanBulletNode();
 	//UpdateBulletNode();
 }
 
@@ -155,19 +135,25 @@ void UPDATEMAP::UpdateFlying()
 		else
 		{
 			//AIMOVE
-			/*add_x = 0;
-			add_y = 1;*/
-			GetAIMove(add_x, add_y);
+			if (AI_speed == 0)
+			{
+				GetAIMove(add_x, add_y);
+				AI_speed = 3;
+			}
+			else
+			{
+				AI_speed--;
+			}
 		}
 		int x = p->node.x + add_x;
 		int y = p->node.y + add_y;
 		int f_c = FlyCollide(x, y, p);
 		FlyDecisionSettlement(f_c, x, y, p);
-		/*if (p->node.shoot == 0)
+		if (p->node.shoot == 0)
 		{
 			FlyShoot(p);
 		}
-		else p->node.shoot--;*/
+		else p->node.shoot--;
 		p = p->next;
 	}
 	if (fly_count < FLY_COUNT)
@@ -301,6 +287,7 @@ void UPDATEMAP::CleanFlyNode()
 			fly_n temp = p;
 			p = p->fp;
 			delete temp;
+			score++;
 		}
 		else
 		{
@@ -318,7 +305,14 @@ void UPDATEMAP::CleanBulletNode()
 		if (!p->node.exist)
 		{
 			p->fp->next = p->next;
-			p->next->fp = p->fp;
+			if (b_tail == p)
+			{
+				b_tail = p->fp;
+			}
+			else
+			{
+				p->next->fp = p->fp;
+			}
 			bullet_n temp = p;
 			p = p->fp;
 			delete temp;
@@ -337,9 +331,9 @@ void UPDATEMAP::CreateBulletType10(fly_n p)
 	if (p->node.bullet_type == 10)
 	{
 		bullet new_bullet;
-		new_bullet.x = PLAYER_FLY.x;
-		new_bullet.y = PLAYER_FLY.y;
-		new_bullet.type = PLAYER_FLY.bullet_type;
+		new_bullet.x =p->node.x;
+		new_bullet.y =p->node.y;
+		new_bullet.type =p->node.bullet_type;
 		new_bullet.dir_x = 0;
 		new_bullet.dir_y = -1;
 		new_bullet.damge = 1;
@@ -350,9 +344,9 @@ void UPDATEMAP::CreateBulletType10(fly_n p)
 		for (int i = -1; i < 2; i++)
 		{
 			bullet new_bullet;
-			new_bullet.x = PLAYER_FLY.x;
-			new_bullet.y = PLAYER_FLY.y;
-			new_bullet.type = PLAYER_FLY.bullet_type;
+			new_bullet.x =p->node.x;
+			new_bullet.y =p->node.y;
+			new_bullet.type =p->node.bullet_type;
 			new_bullet.dir_x = i;
 			new_bullet.dir_y = -1;
 			new_bullet.damge = 1;
@@ -364,19 +358,19 @@ void UPDATEMAP::CreateBulletType10(fly_n p)
 		for (int i = -2; i < 3; i++)
 		{
 			bullet new_bullet;
-			new_bullet.x = PLAYER_FLY.x;
-			new_bullet.y = PLAYER_FLY.y;
-			new_bullet.type = PLAYER_FLY.bullet_type;
+			new_bullet.x =p->node.x;
+			new_bullet.y =p->node.y;
+			new_bullet.type =p->node.bullet_type;
 
 			if (i == -2 || i == 2)
 			{
-				new_bullet.dir_x = i / 2;
+				new_bullet.dir_x = i;
 				new_bullet.dir_y = 0;
 			}
 			else
 			{
 				new_bullet.dir_x = i;
-				new_bullet.dir_y = -1;
+				new_bullet.dir_y = -2;
 			}
 
 			new_bullet.damge = 1;
@@ -388,13 +382,13 @@ void UPDATEMAP::CreateBulletType10(fly_n p)
 		for (int i = -2; i < 4; i++)
 		{
 			bullet new_bullet;
-			new_bullet.x = PLAYER_FLY.x;
-			new_bullet.y = PLAYER_FLY.y;
-			new_bullet.type = PLAYER_FLY.bullet_type;
+			new_bullet.x =p->node.x;
+			new_bullet.y =p->node.y;
+			new_bullet.type =p->node.bullet_type;
 
 			if (i == -2 || i == 2)
 			{
-				new_bullet.dir_x = i / 2;
+				new_bullet.dir_x = i;
 				new_bullet.dir_y = 0;
 			}
 			else if (i == 3)
@@ -405,7 +399,7 @@ void UPDATEMAP::CreateBulletType10(fly_n p)
 			else
 			{
 				new_bullet.dir_x = i;
-				new_bullet.dir_y = -1;
+				new_bullet.dir_y = -2;
 			}
 
 			new_bullet.damge = 1;
@@ -417,47 +411,42 @@ void UPDATEMAP::CreateBulletType10(fly_n p)
 		for (int i = -3; i < 5; i++)
 		{
 			bullet new_bullet;
-			new_bullet.x = PLAYER_FLY.x;
-			new_bullet.y = PLAYER_FLY.y;
-			new_bullet.type = PLAYER_FLY.bullet_type;
+			new_bullet.x =p->node.x;
+			new_bullet.y =p->node.y;
+			new_bullet.type =p->node.bullet_type;
 
 			if (i == -3 || i == 3)
 			{
-				new_bullet.dir_x = i / 3;
+				new_bullet.dir_x = i / 3 *2;
 				new_bullet.dir_y = 0;
 			}
 			else if (i == 0 || i == 4)
 			{
 				new_bullet.dir_x = 0;
-				new_bullet.dir_y = (i - 2) / 2;
+				new_bullet.dir_y = (i - 2);
 			}
 			else if (i == 1 || i == -1)
 			{
-				new_bullet.dir_x = i;
-				new_bullet.dir_y = i;
+				new_bullet.dir_x = i*2;
+				new_bullet.dir_y = i*2;
 			}
 			else if (i == 2 || i == -2)
 			{
-				new_bullet.dir_x = -i / 2;
-				new_bullet.dir_y = i / 2;
+				new_bullet.dir_x = -i ;
+				new_bullet.dir_y = i ;
 			}
 			new_bullet.damge = 1;
 			AddBullet(new_bullet);
 		}
 	}
-
-}
-
-void UPDATEMAP::CreateBulletType15(fly_n p)
-{
-	if (p->node.bullet_type == 15)
+	else if (p->node.bullet_type == 15)
 	{
 		for (int i = -1; i < 2; i += 2)
 		{
 			bullet new_bullet;
-			new_bullet.x = PLAYER_FLY.x + i;
-			new_bullet.y = PLAYER_FLY.y;
-			new_bullet.type = PLAYER_FLY.bullet_type;
+			new_bullet.x = p->node.x + i;
+			new_bullet.y = p->node.y;
+			new_bullet.type = p->node.bullet_type;
 			new_bullet.dir_x = 0;
 			new_bullet.dir_y = -1;
 			new_bullet.damge = 1;
@@ -469,9 +458,9 @@ void UPDATEMAP::CreateBulletType15(fly_n p)
 		for (int i = -1; i < 2; i += 1)
 		{
 			bullet new_bullet;
-			new_bullet.x = PLAYER_FLY.x + i;
-			new_bullet.y = PLAYER_FLY.y + abs(i);
-			new_bullet.type = PLAYER_FLY.bullet_type;
+			new_bullet.x = p->node.x + i;
+			new_bullet.y = p->node.y + abs(i);
+			new_bullet.type = p->node.bullet_type;
 			new_bullet.dir_x = 0;
 			new_bullet.dir_y = -1;
 			new_bullet.damge = 1;
@@ -483,16 +472,93 @@ void UPDATEMAP::CreateBulletType15(fly_n p)
 		for (int i = -2; i < 3; i += 1)
 		{
 			bullet new_bullet;
-			new_bullet.x = PLAYER_FLY.x + i;
-			new_bullet.y = PLAYER_FLY.y + abs(i);
-			new_bullet.type = PLAYER_FLY.bullet_type;
+			new_bullet.x = p->node.x + i;
+			new_bullet.y = p->node.y + abs(i);
+			new_bullet.type = p->node.bullet_type;
 			new_bullet.dir_x = 0;
-			new_bullet.dir_y = -1;
+			new_bullet.dir_y = -3;
+			new_bullet.damge = 1;
+			AddBullet(new_bullet);
+		}
+	}
+	else if (p->node.bullet_type == 18)
+	{
+		for (int i = -3; i < 4; i++)
+		{
+			bullet new_bullet;
+			if (i == 0)
+			{
+				new_bullet.x = p->node.x;
+				new_bullet.y = p->node.y - 2;
+			}
+			else if (i == 1||i==-1 || i == 3||i==-3)
+			{
+				new_bullet.x = p->node.x + i / abs(i);
+				new_bullet.y = p->node.y - abs(i);
+			}
+			else if (i ==2||i==-2)
+			{
+				new_bullet.x = p->node.x + 2 * i;
+				new_bullet.y = p->node.y - abs(i);
+			}
+			new_bullet.type = p->node.bullet_type;
+			new_bullet.dir_x = 0;
+			new_bullet.dir_y = -2;
 			new_bullet.damge = 1;
 			AddBullet(new_bullet);
 		}
 	}
 
+	
+
+ 
+
+}
+
+void UPDATEMAP::CreateBulletType20(fly_n p)
+{
+	if (p->node.bullet_type == 20)
+	{
+		bullet new_bullet;
+		new_bullet.x = p->node.x;
+		new_bullet.y = p->node.y;
+		new_bullet.type = p->node.bullet_type;
+		new_bullet.dir_x = 0;
+		new_bullet.dir_y = 1;
+		new_bullet.damge = 1;
+		AddBullet(new_bullet);
+	}
+	else if ((p->node.bullet_type == 21))
+	{
+		for (int i = 0; i < 3; i++)
+		{
+			bullet new_bullet;
+			if (p->node.x < col / 2)
+			{
+				new_bullet.x = p->node.x + i;
+				new_bullet.y = p->node.y + i;
+			}
+			else 
+			{
+				new_bullet.x = p->node.x - i;
+				new_bullet.y = p->node.y + i;
+			}
+			new_bullet.type = p->node.bullet_type;
+			if (p->node.x < col / 2)
+			{
+				new_bullet.dir_x = 1;
+				new_bullet.dir_y = 1;
+			}
+			else 
+			{
+				new_bullet.dir_x = -1;
+				new_bullet.dir_y = 1;
+			}
+			
+			new_bullet.damge = 1;
+			AddBullet(new_bullet);
+		}
+	}
 
 }
 
@@ -507,22 +573,15 @@ void UPDATEMAP::AddBullet(bullet bn)
 	b_tail = n;
 }
 
-void UPDATEMAP::DeleteBullet(bullet_n bn)
+void UPDATEMAP::DeleteBullet()
 {
-	if (b_tail == bn)	b_tail = bn->fp;
-	else
+	bullet_n temp = nullptr;
+	while (b_tail == b_head)
 	{
-		bn->fp->next = bn->next;
-		bn->next->fp = bn->fp;
+		temp = b_tail->fp;
+		delete b_tail;
+		b_tail = temp;
 	}
-	map[bn->node.y][bn->node.x] = 0;
-	delete bn;
-}
-
-void UPDATEMAP::DeleteBullet(int x, int y)
-{
-	bullet_n p = SearchBullet(x, y);
-	if (p) DeleteBullet(p);
 }
 
 bullet_n UPDATEMAP::SearchBullet(int x, int y)
@@ -548,7 +607,7 @@ void UPDATEMAP::ScatterBullet(int& x, int& y, bullet b)
 void UPDATEMAP::BulletMove(int& x, int& y, bullet b)
 {
 
-	if (b.type >= 10 && b.type < 20)
+	if (b.type >= 10 && b.type < 30)
 	{
 		ScatterBullet(x, y, b);
 	}
@@ -556,11 +615,11 @@ void UPDATEMAP::BulletMove(int& x, int& y, bullet b)
 
 bool UPDATEMAP::BulletCollide(int x, int y)//Åö×²ÅÐ¶¨
 {
-	if (map[y][x] == 1)
+	if (x<=0||x>=col-1||y<=0||y>=row-1)
 	{
 		return 1;
 	}
-	else if (map[y][x] == 0)
+	else if (map[y][x] == 0||(map[y][x]>=10 && map[y][x] <= 30))
 	{
 		return 0;
 	}
@@ -604,13 +663,13 @@ void UPDATEMAP::SiteClearing()
 
 void UPDATEMAP::ChangingBullet(bullet& b)
 {
-	if (b.type >= 10 && b.type < 15)
+	if (b.type >= 10 && b.type < 20)
 	{
-		b.type += 5;
+		b.type += 1;
 	}
-	else if (b.type >= 15 && b.type < 20)
+	else if (b.type >= 20 && b.type < 30)
 	{
-		b.type -= 5;
+		b.type += 1;
 	}
 
 }
@@ -627,19 +686,15 @@ void UPDATEMAP::AddFly(flying fb)
 	f_tail = new_fly;
 }
 
-void UPDATEMAP::DeleteFly(fly_n& fn)
+void UPDATEMAP::DeleteFly()
 {
-	if (f_tail == fn) f_tail = fn->fp;
-	fn->fp->next = fn->next;
-	fn->next->fp = fn->fp;
-	delete fn;
-	fly_count--;
-}
-
-void UPDATEMAP::DeleteFly(int x, int y)
-{
-	fly_n fn = SearchFly(x, y);
-	if (fn) DeleteFly(fn);
+	fly_n temp = nullptr;
+	while (f_tail == f_head)
+	{
+		temp = f_tail->fp;
+		delete f_tail;
+		f_tail = temp;
+	}
 }
 
 fly_n UPDATEMAP::SearchFly(int x, int y)
@@ -668,13 +723,13 @@ int UPDATEMAP::LenFly()
 
 void UPDATEMAP::FlyShoot(fly_n& p)
 {
-	if (p->node.bullet_type >= 10 && p->node.bullet_type < 15)
+	if (p->node.bullet_type >= 10 && p->node.bullet_type < 20)
 	{
 		CreateBulletType10(p);
 	}
-	else if (p->node.bullet_type >= 15 && p->node.bullet_type < 20)
+	else if (p->node.bullet_type >= 20 && p->node.bullet_type < 30)
 	{
-		CreateBulletType15(p);
+		CreateBulletType20(p);
 	}
 	switch (p->node.type)
 	{
@@ -811,9 +866,14 @@ void UPDATEMAP::Start()
 	{
 		ShowMap();
 		std::cout << "healthy : " << PLAYER_FLY.healthy << std::endl;
-		if (PLAYER_FLY.healthy <= 0)break;
+		std::cout << "score : " << score << std::endl;
+		if (PLAYER_FLY.type != 2)
+		{
+			std::cout << "you dead." << std::endl;
+			break;
+		}
 		Update();
-		Sleep(200);
+		Sleep(300);
 		system("cls");
 
 	}
